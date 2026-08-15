@@ -4,3 +4,4 @@
 ## In One headed attention loss = 2.35
 ## In multi headed attention loss = 2.2704
 ## After adding feedward network with one layer loss = 2.2046
+## After Adding residual connections and updates in feedforward layer loss = 2.1425
