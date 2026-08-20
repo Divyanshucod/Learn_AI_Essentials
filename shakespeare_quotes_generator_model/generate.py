@@ -56,5 +56,4 @@ output = model.generate(
 text = tokenizer.decode(
     output[0].tolist()
 )
-
 print(text)

@@ -178,11 +178,11 @@ class GPTSimulation(nn.Module):
 
         for _ in range(max_new_tokens):
 
-            input_tokens = input_tokens[
+            cropped_input = input_tokens[
                 :, -self.context_length:
             ]
 
-            logits, _ = self(input_tokens)
+            logits, _ = self(cropped_input)
 
             logits = logits[:, -1, :]
 
