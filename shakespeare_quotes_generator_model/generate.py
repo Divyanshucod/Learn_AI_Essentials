@@ -50,7 +50,7 @@ input_tokens = torch.tensor(
 input_tokens = input_tokens.to(device)
 output = model.generate(
     input_tokens,
-    max_new_tokens=500
+    max_new_tokens=2000
 )
 
 text = tokenizer.decode(
