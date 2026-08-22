@@ -63,14 +63,11 @@ class BPETokenizer:
                     i += 1
 
             tokens = new_tokens
-
-    def encode(self, text):
-
-        tokens = [self.stoi[ch] for ch in text]
+    def apply_merges(self, tokens):
+        new_tokens = []
 
         for pair, new_token_id in self.merges.items():
 
-            new_tokens = []
             i = 0
 
             while i < len(tokens):
@@ -81,14 +78,69 @@ class BPETokenizer:
                 ):
                     new_tokens.append(new_token_id)
                     i += 2
-
                 else:
                     new_tokens.append(tokens[i])
                     i += 1
 
             tokens = new_tokens
+            new_tokens = []
 
         return tokens
+
+    def encode(self, text):
+
+        special_tokens = {
+            "<|user|>": 300,
+            "<|assistant|>": 301,
+            "<|end|>": 302
+        }
+
+        final_tokens = []
+
+        i = 0
+        normal_text = ""
+
+        while i < len(text):
+
+            matched = False
+
+            for token, token_id in special_tokens.items():
+
+                if text.startswith(token, i):
+
+                    # Encode everything accumulated before special token
+                    if normal_text:
+                        tokens = [self.stoi[ch] for ch in normal_text]
+
+                        # YOUR EXISTING BPE MERGE CODE
+                        tokens = self.apply_merges(tokens)
+
+                        final_tokens.extend(tokens)
+                        normal_text = ""
+
+                    # Add special token directly
+                    final_tokens.append(token_id)
+
+                    i += len(token)
+                    matched = True
+                    break
+
+            if matched:
+                continue
+
+            normal_text += text[i]
+            i += 1
+
+        # Encode remaining normal text
+        if normal_text:
+            tokens = [self.stoi[ch] for ch in normal_text]
+
+            # YOUR EXISTING BPE MERGE CODE
+            tokens = self.apply_merges(tokens)
+
+            final_tokens.extend(tokens)
+
+        return final_tokens
 
     def decode(self, tokens):
         return ''.join(self.itos[token] for token in tokens)
